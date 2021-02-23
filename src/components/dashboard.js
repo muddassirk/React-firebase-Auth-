@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { Card, Button, Alert } from "react-bootstrap"
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
 import {useAuth} from '../context/authContext'
 
@@ -8,8 +8,18 @@ import {useAuth} from '../context/authContext'
 export default function Dashboard() {
     const [error, setError] = useState("")
     const {currentUser, logout } = useAuth()
+    const history = useHistory()
 
-    function handleLogout() {
+
+    async function handleLogout() {
+        setError('')
+
+        try{
+            await logout()
+            history.push('/login')
+        }catch{
+            setError("Failed to logout")
+        }
 
     }
 
@@ -23,6 +33,7 @@ export default function Dashboard() {
                     {error && <Alert variant="danger">{error}</Alert>}
                     <strong>Email: </strong>
                     {(currentUser) && (currentUser.email)}
+                    {/* {(currentUser.email)} */}
                     <Link to="/update-profile" className='btn btn-primary w-100 mt-3' >
                         Update Profile
                     </Link>
